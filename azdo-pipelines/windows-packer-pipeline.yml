@@ -1,0 +1,45 @@
+name: windows-packer-pipeline
+trigger: none
+variables:
+- group: Packer.Secrets
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+- task: AzureCLI@2
+  displayName: Get Azure Credentials for Packer
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: 'ps'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      $subscriptionId=$(az account show --query id -o tsv)
+      Write-Host "##vso[task.setvariable variable=ARM_CLIENT_ID;issecret=true]$env:servicePrincipalId"
+      Write-Host "##vso[task.setvariable variable=ARM_CLIENT_SECRET;issecret=true]$env:servicePrincipalKey"
+      Write-Host "##vso[task.setvariable variable=ARM_SUBSCRIPTION_ID]$subscriptionId"
+      Write-Host "##vso[task.setvariable variable=ARM_TENANT_ID]$env:tenantId"
+    addSpnToEnvironment: true
+- powershell: |
+    packer validate windows/image-template.json
+  env: 
+    ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+    ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+    ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+    ARM_TENANT_ID: $(ARM_TENANT_ID)
+  name: ValidatePackerFile
+- powershell: |
+    packer build windows/image-template.json
+  name: BuildPackerFile
+  env: 
+    ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+    ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+    ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+    ARM_TENANT_ID: $(ARM_TENANT_ID)
+    RESULT_RG: $(RESULT_RG)
+    IMAGE_PUBLISHER: $(IMAGE_PUBLISHER)
+    IMAGE_OFFER: $(IMAGE_OFFER)
+    IMAGE_SKU: $(IMAGE_SKU)
+    TAGS_BUILD_ID: $(Build.BuildId)
+    AZURE_LOCATION: $(AZURE_LOCATION)
+    SAMPLE_VAR: 'test'

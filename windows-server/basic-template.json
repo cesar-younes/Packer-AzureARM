@@ -1,0 +1,78 @@
+{
+  "variables": {
+    "client_id": "{{env `ARM_CLIENT_ID`}}",
+    "client_secret": "{{env `ARM_CLIENT_SECRET`}}",
+    "tenant_id": "{{env `ARM_TENANT_ID`}}",
+    "subscription_id": "{{env `ARM_SUBSCRIPTION_ID`}}",
+    "result_rg": "{{env `RESULT_RG`}}",
+    "image_publisher": "{{env `IMAGE_PUBLISHER`}}",
+    "image_offer": "{{env `IMAGE_OFFER`}}",
+    "image_sku": "{{env `IMAGE_SKU`}}",
+    "image_version": "{{env `IMAGE_VERSION`}}",
+    "tags_build_id": "{{env `TAGS_BUILD_ID`}}",
+    "azure_location": "{{env `AZURE_LOCATION`}}",
+    "sample_var": "{{env `SAMPLE_VAR`}}"
+  },
+  "builders": [
+    {
+      "type": "azure-arm",
+      "client_id": "{{user `client_id`}}",
+      "client_secret": "{{user `client_secret`}}",
+      "tenant_id": "{{user `tenant_id`}}",
+      "subscription_id": "{{user `subscription_id`}}",
+      "managed_image_resource_group_name": "{{user `result_rg`}}",
+      "managed_image_name": "windows-template-{{isotime \"20060102150405\"}}",
+      "os_type": "Windows",
+      "image_publisher": "{{user `image_publisher`}}",
+      "image_offer": "{{user `image_offer`}}",
+      "image_sku": "{{user `image_sku`}}",
+      "communicator": "winrm",
+      "winrm_use_ssl": true,
+      "winrm_insecure": true,
+      "winrm_timeout": "10m",
+      "winrm_username": "packer",
+      "azure_tags": {
+        "DevOps BuildId": "{{user `tags_build_id`}}"
+      },
+      "location": "{{user `azure_location`}}",
+      "vm_size": "Standard_D2_v2",
+      "async_resourcegroup_delete": "true"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "powershell",
+      "script": "windows/sample-powershell.ps1",
+      "environment_vars": [
+        "SAMPLE_VAR={{user `sample_var`}}"
+      ]
+    },
+    {
+      "type": "powershell",
+      "inline": [
+          "Set-Service RdAgent -StartupType Disabled",
+          "Set-Service WindowsAzureTelemetryService -StartupType Disabled",
+          "Set-Service WindowsAzureGuestAgent -StartupType Disabled",
+          "Remove-ItemProperty -Path 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Setup\\SysPrepExternal\\Generalize' -Name '*'"
+        ]
+    },
+    {
+      "type": "windows-restart",
+      "restart_check_command": "powershell -command \"& {Write-Output 'restarted.'}\""
+    },
+    {
+      "type": "powershell",
+      "inline": [
+        "& $env:SystemRoot\\System32\\Sysprep\\Sysprep.exe /oobe /generalize /quiet /quit",
+        "while($true) { $imageState = Get-ItemProperty HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Setup\\State | Select ImageState; if($imageState.ImageState -ne 'IMAGE_STATE_GENERALIZE_RESEAL_TO_OOBE') { Write-Output $imageState.ImageState; Start-Sleep -s 10  } else { break } }"
+      ]
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "manifest",
+      "output": "packer-manifest.json",
+      "strip_path": true
+    }
+  ]
+}
