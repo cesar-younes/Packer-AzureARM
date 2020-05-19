@@ -1,4 +1,6 @@
 # Builder
+This document breaks down the different parts of the basic template and explains what the different parts are doing. If you just want to try out the template go to the [how to build it section](#how-to-build-it).
+
 Packer on Azure has 2 options for building images, `azure-arm` and `azure-chroot`. The simpler one to use is `azure-arm` so we start the builder section by specifying that. Note that I use the word section throughout this write-up but it is only a logical division and everything under [Builder](#builder) is all included in one section in json. 
 ```json
 "type": "azure-arm",
@@ -66,3 +68,29 @@ At this point in time Packer will build the VM with an [ARM](https://docs.micros
       ]
 ```
 In my example template you will see 3 lines that I ran before but those are circumstancial and I only needed to add them because I was building my template with a hosted VM and Azure DevOps
+
+# How to build it
+The template requires the following environment variables as input
+- `ARM_CLIENT_ID`: Service Principal ID
+- `ARM_CLIENT_SECRET`: Service Principal Secret
+- `ARM_TENANT_ID`: Azure Subscription Tenant ID
+- `ARM_SUBSCRIPTION_ID`: Azure Subscription ID
+- `RESULT_RG`: Resource Group where the image will be stored after creation
+- `IMAGE_PUBLISHER`: Publisher of the base image to use
+- `IMAGE_OFFER`: The offer of the base image to use
+- `IMAGE_SKU`: SKU of the base image to use
+- `IMAGE_VERSION`: The Version of the image to use
+- `TAGS_BUILD_ID`: The tag to be added to the image in Azure
+- `AZURE_LOCATION`: The Azure Region where the image will be stored
+- `SAMPLE_VAR`: This is used for demo purposes only and any value can be passed
+
+Building it:
+1 - Change directory to the root of this repo.
+2 - Validate the template: 
+``` shell
+packer validate windows-server/basic-template.json
+```
+3 - Build the template:
+``` shell
+packer build windows-server/basic-template.json
+```
