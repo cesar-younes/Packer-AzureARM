@@ -2,9 +2,9 @@
 This repository contains Packer templates that can be used as a starting point for building a VM image on Azure with the Packer azure-arm builder.
 If you are new to Packer on Azure and are not sure where to start, refer to the documentation of the basic template [here](windows-server/README.md) and try running it.
 The following templates are available:
-- [Basic Windows template](windows-server/basic-template.json)
-- [Custom base image](windows-server/image-template.json)
-- [Azure Marketplace](azure-marketplace/marketplace-template.json)
+- [Basic Windows template](basic-template/)
+- [Custom Image as base image](image-template/)
+- [Azure Marketplace as base image](azure-marketplace/)
 
 ## Pre-requisites
 You need to have an active Azure subscription where have enough rights to provision resources.
