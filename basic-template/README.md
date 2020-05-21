@@ -62,10 +62,10 @@ The completed last section of the builder then looks like this:
 At this point in time Packer will build the VM with an [ARM](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/overview) template then connect to it with WinRM. When connected it will execute the steps specified here in sequential order. The most common step that you almost always would want to run is to make the image generic with sysprep and that would be the following commands:
 ```json
 "type": "powershell",
-      "inline": [
-        "& $env:SystemRoot\\System32\\Sysprep\\Sysprep.exe /oobe /generalize /quiet /quit /mode:vm",
-        "while($true) { $imageState = Get-ItemProperty HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Setup\\State | Select ImageState; Write-Output $imageState.ImageState; if($imageState.ImageState -ne 'IMAGE_STATE_GENERALIZE_RESEAL_TO_OOBE') { Start-Sleep -s 10 } else { break } }"
-      ]
+"inline": [
+  "& $env:SystemRoot\\System32\\Sysprep\\Sysprep.exe /oobe /generalize /quiet /quit /mode:vm",
+  "while($true) { $imageState = Get-ItemProperty HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Setup\\State | Select ImageState; Write-Output $imageState.ImageState; if($imageState.ImageState -ne 'IMAGE_STATE_GENERALIZE_RESEAL_TO_OOBE') { Start-Sleep -s 10 } else { break } }"
+]
 ```
 In my example template you will see 3 lines that I ran before but those are circumstancial and I only needed to add them because I was building my template with a hosted VM and Azure DevOps
 
@@ -79,18 +79,17 @@ The template requires the following environment variables as input
 - `IMAGE_PUBLISHER`: Publisher of the base image to use
 - `IMAGE_OFFER`: The offer of the base image to use
 - `IMAGE_SKU`: SKU of the base image to use
-- `IMAGE_VERSION`: The Version of the image to use
 - `TAGS_BUILD_ID`: The tag to be added to the image in Azure
 - `AZURE_LOCATION`: The Azure Region where the image will be stored
 - `SAMPLE_VAR`: This is used for demo purposes only and any value can be passed
 
 Building it:
-1 - Change directory to the root of this repo.
-2 - Validate the template: 
+1. Change directory to the root of this repo.
+2. Validate the template: 
 ``` shell
-packer validate windows-server/basic-template.json
+packer validate basic-template/basic-template.json
 ```
-3 - Build the template:
+3. Build the template:
 ``` shell
-packer build windows-server/basic-template.json
+packer build basic-template/basic-template.json
 ```
