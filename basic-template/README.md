@@ -67,7 +67,7 @@ At this point in time Packer will build the VM with an [ARM](https://docs.micros
   "while($true) { $imageState = Get-ItemProperty HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Setup\\State | Select ImageState; Write-Output $imageState.ImageState; if($imageState.ImageState -ne 'IMAGE_STATE_GENERALIZE_RESEAL_TO_OOBE') { Start-Sleep -s 10 } else { break } }"
 ]
 ```
-In my example template you will see 3 lines that I ran before but those are circumstancial and I only needed to add them because I was building my template with a hosted VM and Azure DevOps
+In my example template you will see 3 lines that I ran before the sysprep but those are circumstancial and I only needed to add them because I was building my template with a hosted VM and Azure DevOps
 
 # How to build it
 The template requires the following environment variables as input
@@ -76,8 +76,6 @@ The template requires the following environment variables as input
 - `ARM_TENANT_ID`: Azure Subscription Tenant ID
 - `ARM_SUBSCRIPTION_ID`: Azure Subscription ID
 - `RESULT_RG`: Resource Group where the image will be stored after creation
-- `IMAGE_PUBLISHER`: Publisher of the base image to use
-- `IMAGE_OFFER`: The offer of the base image to use
 - `IMAGE_SKU`: SKU of the base image to use
 - `TAGS_BUILD_ID`: The tag to be added to the image in Azure
 - `AZURE_LOCATION`: The Azure Region where the image will be stored

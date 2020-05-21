@@ -5,10 +5,7 @@
     "tenant_id": "{{env `ARM_TENANT_ID`}}",
     "subscription_id": "{{env `ARM_SUBSCRIPTION_ID`}}",
     "result_rg": "{{env `RESULT_RG`}}",
-    "image_publisher": "{{env `IMAGE_PUBLISHER`}}",
-    "image_offer": "{{env `IMAGE_OFFER`}}",
     "image_sku": "{{env `IMAGE_SKU`}}",
-    "image_version": "{{env `IMAGE_VERSION`}}",
     "tags_build_id": "{{env `TAGS_BUILD_ID`}}",
     "azure_location": "{{env `AZURE_LOCATION`}}",
     "sample_var": "{{env `SAMPLE_VAR`}}"
@@ -26,8 +23,8 @@
       "managed_image_name": "windows-template-{{isotime \"20060102150405\"}}",
 
       "os_type": "Windows",
-      "image_publisher": "{{user `image_publisher`}}",
-      "image_offer": "{{user `image_offer`}}",
+      "image_publisher": "MicrosoftWindowsServer",
+      "image_offer": "WindowsServer",
       "image_sku": "{{user `image_sku`}}",
 
       "communicator": "winrm",
@@ -47,7 +44,7 @@
   "provisioners": [
     {
       "type": "powershell",
-      "script": "windows-server/sample-powershell.ps1",
+      "script": "basic-template/sample-powershell.ps1",
       "environment_vars": [
         "SAMPLE_VAR={{user `sample_var`}}"
       ]

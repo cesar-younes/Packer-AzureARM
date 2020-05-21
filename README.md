@@ -1,6 +1,6 @@
 # Packer on Azure with ARM
 This repository contains Packer templates that can be used as a starting point for building a VM image on Azure with the Packer azure-arm builder.
-If you are new to Packer on Azure and are not sure where to start, refer to the documentation of the basic template [here](windows-server/README.md) and try running it.
+If you are new to Packer on Azure and are not sure where to start, refer to the documentation of the basic template [here](basic-template/) and try running it.
 The following templates are available:
 - [Basic Windows template](basic-template/)
 - [Custom Image as base image](image-template/)
