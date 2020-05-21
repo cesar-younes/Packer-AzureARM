@@ -4,7 +4,7 @@ If you are new to Packer on Azure and are not sure where to start, refer to the 
 The following templates are available:
 - [Basic Windows template](basic-template/)
 - [Custom Image as base image](image-template/)
-- [Azure Marketplace as base image](azure-marketplace/)
+- [Azure Marketplace Image as base image](azure-marketplace/)
 
 ## Pre-requisites
 You need to have an active Azure subscription where have enough rights to provision resources.
