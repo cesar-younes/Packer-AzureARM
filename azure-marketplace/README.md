@@ -43,3 +43,4 @@ The filled values look like this
     "plan_publisher": "center-for-internet-security-inc"
 },
 ```
+**Note:** This template works for Marketplace images in general. For the CIS image in particular there is some additional configuration required to enable WinRM Basic Authentication. If that is not enabled then Packer will provision the VM but will get a WinRM timeout error when it tries to connect. 
