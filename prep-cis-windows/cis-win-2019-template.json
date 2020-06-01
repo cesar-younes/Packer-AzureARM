@@ -23,17 +23,13 @@
     }
   },
   "variables": {
-    "nicName": "myVMNic",
+    "nicName": "ciswin-nic",
     "addressPrefix": "10.0.0.0/16",
     "subnetName": "Subnet",
     "subnetPrefix": "10.0.0.0/24",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
-    "vmName": "MyVM",
-    "virtualNetworkName": "MyVNET",
-    "dnsNameForPublicIP": "[uniqueString(resourceGroup().id)]",
-    "scriptFolder": ".",
-    "scriptFileName": "Copy-FileFromAzure.ps1",
-    "fileToBeCopied": "FileToBeCopied.txt",
+    "vmName": "ciswin-vm",
+    "virtualNetworkName": "ciswin-vnet",
     "networkSecurityGroupName": "default-NSG"
   },
   "resources": [
@@ -94,7 +90,6 @@
       "name": "[variables('nicName')]",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[variables('publicIPAddressName')]",
         "[variables('virtualNetworkName')]"
       ],
       "properties": {
@@ -103,9 +98,6 @@
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
-              "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]"
-              },
               "subnet": {
                 "id": "[variables('subnetRef')]"
               }
@@ -122,6 +114,11 @@
       "dependsOn": [
         "[variables('nicName')]"
       ],
+      "plan": {
+        "name": "cis-ws2019-l1",
+        "product": "cis-windows-server-2019-v1-0-0-l1",
+        "publisher": "center-for-internet-security-inc"
+      },
       "properties": {
         "hardwareProfile": {
           "vmSize": "Standard_D2_v2"
@@ -166,19 +163,13 @@
             "autoUpgradeMinorVersion": true,
             "settings": {
               "fileUris": [
-                 
+                 "https://raw.githubusercontent.com/cesar-younes/Packer-AzureARM/prepwork-for-cis-windows/prep-cis-windows/configure-winrm.ps1"
               ],
-              "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('scriptFolder'), '/', variables('scriptFileName'), ' ', variables('scriptParameters'))]"
+              "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File configure-winrm.ps1"
             }
           }
         }
       ]
     }
-  ],
-  "outputs": {
-    "vm-fqdn": {
-      "type": "string",
-      "value": "[reference(variables('publicIPAddressName'), '2016-03-30').dnsSettings.fqdn]"
-    }
-  }
+  ]
 }

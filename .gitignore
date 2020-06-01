@@ -8,3 +8,5 @@ crash.log
 *.box
 
 packerlog.txt
+
+cis-win-2019-params.json
