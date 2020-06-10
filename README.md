@@ -5,6 +5,7 @@ The following templates are available:
 - [Basic Windows template](basic-template/)
 - [Custom Image as base image](image-template/)
 - [Azure Marketplace Image as base image](azure-marketplace/)
+- [Read from and Store in Azure Shared Image Gallery](shared-image-gallery/)
 
 ## Pre-requisites
 You need to have an active Azure subscription where have enough rights to provision resources.

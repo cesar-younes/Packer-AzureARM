@@ -40,4 +40,3 @@ If this section is specified then the following **cannot** be included in the te
 - VHD (image_url)
 - Image Reference (image_publisher, image_offer, image_sku)
 - Managed Disk (custom_managed_disk_image_name, custom_managed_disk_resource_group_name)
-- Shared Gallery Image (shared_image_gallery)
